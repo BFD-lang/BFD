@@ -1,9 +1,14 @@
+let inComponent = false;
+let currentComponent = "";
+let componentLines: string[] = [];
+
 export function parseMiz(mizText: string): string {
-  console.log("✅ parser.ts: 再設計版");
+  console.log("✅ parser.ts: 再設計・修正版");
 
   const lines = mizText.split("\n");
   const jsLines: string[] = [];
   const indentStack: (number | "VIEW")[] = [];
+  let inRoute = false;
 
   for (const line of lines) {
     if (line.trim() === "") continue;
@@ -11,20 +16,47 @@ export function parseMiz(mizText: string): string {
     const indent = line.match(/^\s*/)?.[0].length ?? 0;
     const trimmed = line.trim();
 
-    // ✅ スコープを閉じる
-    console.log("📏 indent", indent, "stack", indentStack);
+    // ✅ component定義ブロック開始
+    if (trimmed.startsWith("component ")) {
+      const match = trimmed.match(/^component\s+"(.+?)":?$/);
+      if (match) {
+        inComponent = true;
+        currentComponent = match[1];
+        componentLines = [];
+        indentStack.push(indent);
+        continue;
+      }
+    }
 
+    // ✅ componentブロック内 → collect lines
+    if (inComponent) {
+      const baseIndent = indentStack[indentStack.length - 1] as number;
+      if (indent <= baseIndent) {
+        // ブロック終了
+        const body = parseComponentBody(componentLines.join("\n"));
+        jsLines.push(`defineComponent("${currentComponent}", () => div(`);
+        jsLines.push(body);
+        jsLines.push("));");
+        inComponent = false;
+        currentComponent = "";
+        indentStack.pop();
+      } else {
+        componentLines.push(line);
+        continue;
+      }
+    }
+
+    // ✅ スコープを閉じる
     while (
       indentStack.length > 0 &&
       typeof indentStack[indentStack.length - 1] === "number" &&
-      indent <= (indentStack[indentStack.length - 1] as number) // ← ← ← ココ！
+      indent <= (indentStack[indentStack.length - 1] as number)
     ) {
       const top = indentStack.pop();
-      console.log("🔽 closing scope for:", top);
       if (top === "VIEW") {
         jsLines.push("))");
       } else {
-        jsLines.push("}})"); // ← 閉じる！
+        jsLines.push("})");
       }
     }
 
@@ -43,16 +75,19 @@ export function parseMiz(mizText: string): string {
 
     // ✅ route構文
     else if (trimmed.startsWith("route ")) {
-      const match = trimmed.match(/^route\s+(".*?")\s*=>?/);
+      const match = trimmed.match(/^route\s+"(.+?)"\s*=>?/);
       if (match) {
-        jsLines.push(`route(${match[1]}, () => {`);
+        jsLines.push(`route("${match[1]}", () => {`);
         indentStack.push(indent);
+        inRoute = true;
       }
     }
 
     // ✅ view構文
     else if (trimmed === "view:") {
-      jsLines.push("return view(() => div(");
+      console.log("🪟 entering view:");
+      const viewLine = inRoute ? "return view(() => div(" : "view(() => div(";
+      jsLines.push(viewLine);
       indentStack.push("VIEW");
     }
 
@@ -68,9 +103,14 @@ export function parseMiz(mizText: string): string {
       jsLines.push(`  ${camelize(key.trim())}: "${value}",`);
     }
 
-    // ✅ タグ（h1, buttonなど）
+    // ✅ タグ or コンポーネント呼び出し
     else if (/^\w+/.test(trimmed)) {
-      jsLines.push(transformTag(trimmed));
+      const [word] = trimmed.split(/\s+/);
+      if (word[0] === word[0].toUpperCase()) {
+        jsLines.push(`renderComponent("${word}"),`);
+      } else {
+        jsLines.push(transformTag(trimmed));
+      }
     }
 
     // ❌ fallback
@@ -79,7 +119,7 @@ export function parseMiz(mizText: string): string {
     }
   }
 
-  // ✅ 最後に残ったスコープを閉じる
+  // ✅ スコープ残り全部閉じる
   while (indentStack.length > 0) {
     const top = indentStack.pop();
     if (top === "VIEW") {
@@ -92,6 +132,27 @@ export function parseMiz(mizText: string): string {
   return jsLines.join("\n");
 }
 
+// ✅ コンポーネント用の簡易再帰パーサ（return含まない）
+function parseComponentBody(mizText: string): string {
+  const lines = mizText.split("\n");
+  const body: string[] = [];
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed === "") continue;
+    if (/^\w+/.test(trimmed)) {
+      const [word] = trimmed.split(/\s+/);
+      if (word[0] === word[0].toUpperCase()) {
+        body.push(`renderComponent("${word}"),`);
+      } else {
+        body.push(transformTag(trimmed));
+      }
+    } else {
+      body.push(`// Unparsed in component: ${line}`);
+    }
+  }
+  return body.join("\n");
+}
+
 // camelCase変換
 function camelize(str: string): string {
   return str.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
@@ -101,8 +162,13 @@ function camelize(str: string): string {
 function transformTag(line: string): string {
   const match = line.match(/^(\w+)\s*(\{.*\})?\s*["']?(.*?)["']?$/);
   if (!match) return `// Unparsed tag: ${line}`;
+
   const tag = match[1];
-  const attrs = match[2] || "{}";
-  const text = (match[3] || "").replace(/"/g, '\\"');
-  return `${tag}(${attrs}, "${text}"),`;
+  const rawAttrs = match[2] || "{}";
+  const rawText = match[3] || "";
+
+  // `:` のみは無視（view:の残骸など）
+  const text = rawText === ":" ? "" : rawText;
+  console.log(`🛠️ tag parsed:`, { tag, rawAttrs, text });
+  return `${tag}(${rawAttrs}, "${text}"),`;
 }

@@ -1,9 +1,9 @@
-title "JetScript"
-style body:
-  font-family: sans-serif
-  padding: 2em
+component "PostForm":
+  div:
+    input { placeholder: "内容" }
+    button { type: "submit" } "送信"
 
-route "/" => 
+route "/" =>
   view:
-    h1 "Hello!JetScript"
-    button { onclick: "alert('hi')" } "Click!"
+    h1 "投稿一覧"
+    PostForm

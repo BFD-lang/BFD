@@ -3,6 +3,24 @@ import { parseMiz } from "./parser.ts";
 const routes: Record<string, Function> = {};
 let styleBlock = "";
 let scriptBlock = "";
+function escapeHtml(str: any): string {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+const components = {};
+
+function defineComponent(name, fn) {
+  components[name] = fn;
+}
+
+function renderComponent(name, args = []) {
+  if (!components[name]) throw new Error(`Component "${name}" not found`);
+  const result = components[name](...args);
+}
 
 function attrsToHTML(props: any): string {
   return Object.entries(props || {})
@@ -17,7 +35,16 @@ globalThis.route = (path: string, handler: (req?: any) => any) => {
 
 globalThis.view = (fn: () => string) => fn();
 
-globalThis.div = (...children: any[]) => `<div>${children.join("")}</div>`;
+globalThis.div = (...children: any[]) =>
+  `<div>${children
+    .map((c) =>
+      typeof c === "string"
+        ? c
+        : typeof c === "object" && c !== null
+        ? escapeHtml(JSON.stringify(c))
+        : String(c)
+    )
+    .join("")} `;
 globalThis.h1 = (props: any, text: string) => {
   const attrs = attrsToHTML(props);
   return `<h1 ${attrs}>${text}</h1>`;
@@ -34,7 +61,8 @@ globalThis.p = (...args: any[]) => {
   }
 };
 
-globalThis.text = (content: string) => content;
+globalThis.text = (content: any) =>
+  typeof content === "string" ? content : escapeHtml(String(content));
 
 globalThis.button = (attrs: any, text: string) => {
   const attrString = Object.entries(attrs || {})
