@@ -1,0 +1,10 @@
+title "カウンター"
+
+style body:
+  font-family: sans-serif
+  padding: 2em
+
+route "/" => 
+  view:
+    h1 "こんにちは"
+    button { onclick: "alert('hi')" } "Click!"
