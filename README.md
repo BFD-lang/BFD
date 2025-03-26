@@ -1,5 +1,8 @@
 # 🚀 JetScript
 
+## 🚀 Built in 14 hours. For MVPs, Hackathons, and rebels.
+
+
 **The poetic, startup-native scripting language.**  
 Build MVPs like never before. No toolchains, no ceremony — just flow.
 
@@ -127,7 +130,7 @@ Star the repo, try it out, and open an issue!
 ## 📡 Follow the Journey
 
 🧵 [@structax on X (Twitter)](https://twitter.com/structax)  
-🌐 JetScript.dev (coming soon)
+🌐 JetScript.dev/play (coming soon)
 
 ---
 

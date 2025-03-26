@@ -1,10 +1,9 @@
-title "カウンター"
-
+title "JetScript"
 style body:
   font-family: sans-serif
   padding: 2em
 
 route "/" => 
   view:
-    h1 "こんにちは"
+    h1 "Hello!JetScript"
     button { onclick: "alert('hi')" } "Click!"
