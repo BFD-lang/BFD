@@ -2,7 +2,7 @@
 
 ## 🚀 Built in 14 hours. For MVPs, Hackathons, and rebels.
 
-![JetScript Screenshot](https://raw.githubusercontent.com/yourname/jetscript/main/jetscript.png)
+![JetScript Screenshot](https://github.com/jetscript-lang/JetScript/blob/master/assets/jetscript.png)
 
 
 **The poetic, startup-native scripting language.**  
