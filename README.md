@@ -2,6 +2,8 @@
 
 ## 🚀 Built in 14 hours. For MVPs, Hackathons, and rebels.
 
+![JetScript Screenshot](https://raw.githubusercontent.com/yourname/jetscript/main/jetscript.png)
+
 
 **The poetic, startup-native scripting language.**  
 Build MVPs like never before. No toolchains, no ceremony — just flow.
