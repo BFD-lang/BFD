@@ -40,10 +40,15 @@ route "/" do
   view:
     h1 "Count: #{count}"
     button { onclick: inc(count) } "＋"
-✔️ No imports
-✔️ No JSX
-✔️ No hooks
+```
+
+✔️ No imports  
+✔️ No JSX  
+✔️ No hooks  
 ✔️ Just your idea, in code
+
+---
+
 ## 😵 JSX vs ✨ JetScript
 
 | Feature           | JSX / React (TypeScript) | JetScript                  |
@@ -61,6 +66,7 @@ route "/" do
 > JSX is for browsers. **JetScript is for builders.**
 
 ---
+
 
 ## 🛠 Features
 
