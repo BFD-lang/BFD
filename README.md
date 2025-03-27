@@ -1,7 +1,6 @@
-# 🚀 JetScript
-
-## 🚀 Built in 14 hours. For MVPs, Hackathons, and rebels.
-
+# 🚀 JetScript 
+Made by a 22 y/o
+## 🚀 Built in 14 hours. For MVPs, Hackathons, and rebels. 
 ![JetScript Screenshot](https://github.com/jetscript-lang/JetScript/blob/master/assets/jetscript.png)
 
 

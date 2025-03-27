@@ -18,7 +18,15 @@ export function parseMiz(mizText: string): string {
 
     // ✅ component定義ブロック開始
     if (trimmed.startsWith("component ")) {
-      const match = trimmed.match(/^component\s+"(.+?)":?$/);
+      const match = trimmed.match(/^component\s+"(\w+)(\((.*?)\))?":?$/);
+      if (match) {
+        const match = trimmed.match(/^component\s+"(\w+)(\((.*?)\))?":?$/);
+        const name = match?.[1] || ""; // "Button"
+        const args = match?.[3]?.split(",").map((s) => s.trim()) || []; // ["label"]
+        jsLines.push(
+          `defineComponent("${name}", (${args.join(",")}) => { return div(`
+        );
+      }
       if (match) {
         inComponent = true;
         currentComponent = match[1];
@@ -34,9 +42,11 @@ export function parseMiz(mizText: string): string {
       if (indent <= baseIndent) {
         // ブロック終了
         const body = parseComponentBody(componentLines.join("\n"));
-        jsLines.push(`defineComponent("${currentComponent}", () => div(`);
+        jsLines.push(
+          `defineComponent("${currentComponent}", () => { return div(`
+        );
         jsLines.push(body);
-        jsLines.push("));");
+        jsLines.push(`); });`);
         inComponent = false;
         currentComponent = "";
         indentStack.pop();
@@ -65,6 +75,16 @@ export function parseMiz(mizText: string): string {
       const value = trimmed.slice(6).trim();
       jsLines.push(`title(${value})`);
     }
+    // もし "PostForm" や "Button("送信")" のように propsありで使われてたら
+    if (/^(\w+)\((.*?)\)$/.test(trimmed)) {
+      const match = trimmed.match(/^(\w+)\((.*?)\)$/);
+      if (match) {
+        const [, name, args] = match;
+        const argList = args.split(",").map((s: string) => s.trim()).join(", ");
+        jsLines.push(`renderComponent("${name}", [${argList}]),`);
+      }
+    }
+    
 
     // ✅ style構文
     else if (trimmed.startsWith("style ")) {
@@ -160,6 +180,7 @@ function camelize(str: string): string {
 
 // タグ処理
 function transformTag(line: string): string {
+  console.log("🔧 transformTag input:", line);
   const match = line.match(/^(\w+)\s*(\{.*\})?\s*["']?(.*?)["']?$/);
   if (!match) return `// Unparsed tag: ${line}`;
 
@@ -168,7 +189,13 @@ function transformTag(line: string): string {
   const rawText = match[3] || "";
 
   // `:` のみは無視（view:の残骸など）
-  const text = rawText === ":" ? "" : rawText;
-  console.log(`🛠️ tag parsed:`, { tag, rawAttrs, text });
-  return `${tag}(${rawAttrs}, "${text}"),`;
+  const safeText = rawText === ":" ? "" : rawText;
+
+  // 🔧ここでちゃんとチェーン適用
+  const transformedText = safeText
+    .replace(/"/g, '\\"')
+    .replace(/#\{(.*?)\}/g, (_, expr) => `" + (${expr}) + "`);
+
+  console.log("🪄 parsed tag:", { tag, rawAttrs, safeText });
+  return `${tag}(${rawAttrs}, "${safeText}"),`;
 }

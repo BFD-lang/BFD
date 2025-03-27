@@ -1,9 +1,5 @@
-component "PostForm":
-  div:
-    input { placeholder: "内容" }
-    button { type: "submit" } "送信"
+component "Button(label)":
+  button { onclick: alert(label) } "#{label}"
 
-route "/" =>
-  view:
-    h1 "投稿一覧"
-    PostForm
+view:
+  Button("送信")

@@ -10,23 +10,26 @@ function escapeHtml(str: any): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
-
+function attrsToHTML(props: any = {}): string {
+  return Object.entries(props)
+    .map(([k, v]) => `${k}="${v}"`)
+    .join(" ");
+}
 const components = {};
 
 function defineComponent(name, fn) {
+  console.log("🛠️ defineComponent:", name);
   components[name] = fn;
 }
 
 function renderComponent(name, args = []) {
+  console.log("👀 calling component:", name);
   if (!components[name]) throw new Error(`Component "${name}" not found`);
   const result = components[name](...args);
+  console.log("🎯 component output:", result);
+  return result;
 }
 
-function attrsToHTML(props: any): string {
-  return Object.entries(props || {})
-    .map(([key, value]) => `${key}="${value}"`)
-    .join(" ");
-}
 globalThis.title = (t: string) => console.log("App Title:", t);
 
 globalThis.route = (path: string, handler: (req?: any) => any) => {
@@ -35,16 +38,10 @@ globalThis.route = (path: string, handler: (req?: any) => any) => {
 
 globalThis.view = (fn: () => string) => fn();
 
-globalThis.div = (...children: any[]) =>
-  `<div>${children
-    .map((c) =>
-      typeof c === "string"
-        ? c
-        : typeof c === "object" && c !== null
-        ? escapeHtml(JSON.stringify(c))
-        : String(c)
-    )
-    .join("")} `;
+globalThis.div = (props: any, ...children: any[]) =>
+  `<div ${attrsToHTML(props)}>${children
+    .map((c) => (typeof c === "string" ? c : String(c)))
+    .join("")}</div>`;
 globalThis.h1 = (props: any, text: string) => {
   const attrs = attrsToHTML(props);
   return `<h1 ${attrs}>${text}</h1>`;
