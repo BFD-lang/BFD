@@ -23,7 +23,7 @@ function defineComponent(name, fn) {
 }
 
 function renderComponent(name, args = []) {
-  console.log("👀 calling component:", name);
+  console.log("👀 calling component:", name, "with args:", args);
   if (!components[name]) throw new Error(`Component "${name}" not found`);
   const result = components[name](...args);
   console.log("🎯 component output:", result);
@@ -62,6 +62,8 @@ globalThis.text = (content: any) =>
   typeof content === "string" ? content : escapeHtml(String(content));
 
 globalThis.button = (attrs: any, text: string) => {
+  console.log("🧱 <button> attrs:", attrs);
+  console.log("🧱 <button> text:", text);
   const attrString = Object.entries(attrs || {})
     .map(([k, v]) => `${k}="${v}"`)
     .join(" ");

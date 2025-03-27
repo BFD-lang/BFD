@@ -1,6 +1,7 @@
 let inComponent = false;
 let currentComponent = "";
 let componentLines: string[] = [];
+let componentArgs: string[] = []; // ← これをグローバルに定義
 
 export function parseMiz(mizText: string): string {
   console.log("✅ parser.ts: 再設計・修正版");
@@ -22,6 +23,11 @@ export function parseMiz(mizText: string): string {
       if (match) {
         const match = trimmed.match(/^component\s+"(\w+)(\((.*?)\))?":?$/);
         const name = match?.[1] || ""; // "Button"
+        currentComponent = match ? match[1] : "";
+        componentArgs = match
+          ? match[3]?.split(",").map((s) => s.trim()) || []
+          : [];
+
         const args = match?.[3]?.split(",").map((s) => s.trim()) || []; // ["label"]
       }
       if (match) {
@@ -37,15 +43,17 @@ export function parseMiz(mizText: string): string {
     if (inComponent) {
       const baseIndent = indentStack[indentStack.length - 1] as number;
       if (indent <= baseIndent) {
-        // ブロック終了
         const body = parseComponentBody(componentLines.join("\n"));
         jsLines.push(
-          `defineComponent("${currentComponent}", () => { return div(`
+          `defineComponent("${currentComponent}", (${componentArgs.join(
+            ","
+          )}) => { return div(`
         );
         jsLines.push(body);
         jsLines.push(`); });`);
         inComponent = false;
         currentComponent = "";
+        componentArgs = []; // ← ここで初期化
         indentStack.pop();
       } else {
         componentLines.push(line);
@@ -193,21 +201,28 @@ function parseComponentBody(mizText: string): string {
 function camelize(str: string): string {
   return str.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 }
+function quoteWrap(str: string): string {
+  if (/^\s*"\s*\+\s*.*?\s*\+\s*"\s*$/.test(str)) {
+    return str; // すでに "" + var + "" の構造ならそのまま
+  }
+  return `"${str}"`;
+}
 
 // タグ処理
 function transformTag(line: string): string {
   console.log("🔧 transformTag input:", line);
 
-  const match = line.match(/^(\w+)\s*(\{.*?\})?\s*(["'])(.*?)\3?$/);
+  // 🛠️ 正規表現を後ろからtextだけ抜くよう変更
+  const match = line.match(/^(\w+)\s*(\{.*?\})?\s*(?:"(.*?)")?$/);
   if (!match) return `// Unparsed tag: ${line}`;
 
   const tag = match[1];
   const rawAttrs = match[2] || "{}";
-  const rawText = match[4] || "";
+  const rawText = match[3] || "";
 
   const safeText = rawText
-    .replace(/"/g, '\\"')
-    .replace(/#\{(.*?)\}/g, (_, expr) => `" + (${expr}) + "`);
+    .replace(/"/g, '\\"') // エスケープ
+    .replace(/#\{(.*?)\}/g, (_, expr) => `" + (${expr}) + "`); // 変数展開
 
   console.log("🪄 parsed tag:", { tag, rawAttrs, safeText });
 
