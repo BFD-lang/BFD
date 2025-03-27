@@ -23,9 +23,6 @@ export function parseMiz(mizText: string): string {
         const match = trimmed.match(/^component\s+"(\w+)(\((.*?)\))?":?$/);
         const name = match?.[1] || ""; // "Button"
         const args = match?.[3]?.split(",").map((s) => s.trim()) || []; // ["label"]
-        jsLines.push(
-          `defineComponent("${name}", (${args.join(",")}) => { return div(`
-        );
       }
       if (match) {
         inComponent = true;
@@ -80,11 +77,13 @@ export function parseMiz(mizText: string): string {
       const match = trimmed.match(/^(\w+)\((.*?)\)$/);
       if (match) {
         const [, name, args] = match;
-        const argList = args.split(",").map((s: string) => s.trim()).join(", ");
+        const argList = args
+          .split(",")
+          .map((s: string) => s.trim())
+          .join(", ");
         jsLines.push(`renderComponent("${name}", [${argList}]),`);
       }
     }
-    
 
     // ✅ style構文
     else if (trimmed.startsWith("style ")) {
@@ -156,20 +155,37 @@ export function parseMiz(mizText: string): string {
 function parseComponentBody(mizText: string): string {
   const lines = mizText.split("\n");
   const body: string[] = [];
+
   for (const line of lines) {
     const trimmed = line.trim();
     if (trimmed === "") continue;
-    if (/^\w+/.test(trimmed)) {
+
+    // ✅ "Button(\"送信\")" にマッチさせる
+    if (/^(\w+)\((.*?)\)$/.test(trimmed)) {
+      const [, name, args] = trimmed.match(/^(\w+)\((.*?)\)$/)!;
+      const argList = args
+        .split(",")
+        .map((s) => s.trim())
+        .join(", ");
+      body.push(`renderComponent("${name}", [${argList}]),`);
+    }
+
+    // ✅ 単体のコンポーネント（PascalCase）
+    else if (/^\w+/.test(trimmed)) {
       const [word] = trimmed.split(/\s+/);
       if (word[0] === word[0].toUpperCase()) {
         body.push(`renderComponent("${word}"),`);
       } else {
         body.push(transformTag(trimmed));
       }
-    } else {
+    }
+
+    // ✅ fallback
+    else {
       body.push(`// Unparsed in component: ${line}`);
     }
   }
+
   return body.join("\n");
 }
 
@@ -197,5 +213,3 @@ function transformTag(line: string): string {
 
   return `${tag}(${rawAttrs}, "${safeText}"),`;
 }
-
-

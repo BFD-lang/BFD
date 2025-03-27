@@ -186,4 +186,4 @@ try {
 } catch (e) {
   console.error("❌ Eval Error:", e);
 }
-console.log("🌐 Jet App running at http://localhost:3000");
+console.log("🌐 Jet Agpp running at http://localhost:3000");
