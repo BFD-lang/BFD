@@ -181,21 +181,21 @@ function camelize(str: string): string {
 // タグ処理
 function transformTag(line: string): string {
   console.log("🔧 transformTag input:", line);
-  const match = line.match(/^(\w+)\s*(\{.*\})?\s*["']?(.*?)["']?$/);
+
+  const match = line.match(/^(\w+)\s*(\{.*?\})?\s*(["'])(.*?)\3?$/);
   if (!match) return `// Unparsed tag: ${line}`;
 
   const tag = match[1];
   const rawAttrs = match[2] || "{}";
-  const rawText = match[3] || "";
+  const rawText = match[4] || "";
 
-  // `:` のみは無視（view:の残骸など）
-  const safeText = rawText === ":" ? "" : rawText;
-
-  // 🔧ここでちゃんとチェーン適用
-  const transformedText = safeText
+  const safeText = rawText
     .replace(/"/g, '\\"')
     .replace(/#\{(.*?)\}/g, (_, expr) => `" + (${expr}) + "`);
 
   console.log("🪄 parsed tag:", { tag, rawAttrs, safeText });
+
   return `${tag}(${rawAttrs}, "${safeText}"),`;
 }
+
+
