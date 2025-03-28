@@ -1,0 +1,11 @@
+state:
+  count = signal(0)
+
+route "/" do
+  html:
+    head:
+      title "Counter"
+    body:
+      h1 "Count: #{count}"
+      button @click="count++" "+"
+      button @click="count--" "-"
