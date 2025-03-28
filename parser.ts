@@ -210,21 +210,24 @@ function quoteWrap(str: string): string {
 
 // タグ処理
 function transformTag(line: string): string {
-  console.log("🔧 transformTag input:", line);
+  console.log("🔧 transformTdag input:", line);
 
-  // 🛠️ 正規表現を後ろからtextだけ抜くよう変更
   const match = line.match(/^(\w+)\s*(\{.*?\})?\s*(?:"(.*?)")?$/);
   if (!match) return `// Unparsed tag: ${line}`;
 
   const tag = match[1];
-  const rawAttrs = match[2] || "{}";
+  const rawAttrsRaw = match[2] || "{}";
+  const rawAttrs = rawAttrsRaw.replace(
+    /#\{(.*?)\}/g,
+    (_, expr) => `" + (${expr}) + "`
+  );
+
   const rawText = match[3] || "";
-
   const safeText = rawText
-    .replace(/"/g, '\\"') // エスケープ
-    .replace(/#\{(.*?)\}/g, (_, expr) => `" + (${expr}) + "`); // 変数展開
+    .replace(/"/g, '\\"')
+    .replace(/#\{(.*?)\}/g, (_, expr) => `" + (${expr}) + "`);
 
-  console.log("🪄 parsed tag:", { tag, rawAttrs, safeText });
+  console.log("🪄 parsedd tag:", { tag, rawAttrs, safeText });
 
   return `${tag}(${rawAttrs}, "${safeText}"),`;
 }

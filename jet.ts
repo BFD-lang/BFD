@@ -38,10 +38,14 @@ globalThis.route = (path: string, handler: (req?: any) => any) => {
 
 globalThis.view = (fn: () => string) => fn();
 
-globalThis.div = (props: any, ...children: any[]) =>
-  `<div ${attrsToHTML(props)}>${children
-    .map((c) => (typeof c === "string" ? c : String(c)))
-    .join("")}</div>`;
+globalThis.div = (props: any, ...children: any[]) => {
+  const attrString =
+    props && typeof props === "object" && Object.keys(props).length > 0
+      ? " " + attrsToHTML(props)
+      : "";
+  return `<div${attrString}>${children.map(String).join("")}</div>`;
+};
+
 globalThis.h1 = (props: any, text: string) => {
   const attrs = attrsToHTML(props);
   return `<h1 ${attrs}>${text}</h1>`;
@@ -65,7 +69,11 @@ globalThis.button = (attrs: any, text: string) => {
   console.log("🧱 <button> attrs:", attrs);
   console.log("🧱 <button> text:", text);
   const attrString = Object.entries(attrs || {})
-    .map(([k, v]) => `${k}="${v}"`)
+    .map(([k, v]) =>
+      typeof v === "string" && v.includes('" +')
+        ? `${k}="${v}"`
+        : `${k}="${String(v)}"`
+    )
     .join(" ");
   return `<button ${attrString}>${text}</button>`;
 };
@@ -162,6 +170,7 @@ Bun.serve({
         }
       } else {
         const result = handler();
+        console.log("🧾 result from handler:", result);
         if (result?.type === "json") {
           return Response.json(result.data);
         } else {

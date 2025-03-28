@@ -1,8 +1,2 @@
 component "Button(label)":
-  button { onclick: "alert('#{label}')" } "#{label}"
-
-route "/" =>
-  view:
-    Button("送信")
-
-
+  button { onclick: "alert('送信')" } "#{label}"
