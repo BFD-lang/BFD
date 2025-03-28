@@ -1,2 +1,0 @@
-component "Button(label)":
-  button { onclick: "alert('送信')" } "#{label}"
