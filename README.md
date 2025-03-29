@@ -1,140 +1,162 @@
 # NitroPress
 
-> ✨ **This is not a SPA. Not an MPA. Not SSR. This is NAR.**  
-> **Nitro Architecture for Rendering — a new category of UI.**
+> **A fullstack web app in one file.**  
+> **UI, API, and DB — with no JS, no build, just grammar.**
 
-NitroPress is a declarative, HTML-first UI grammar designed for the AI era. No JSX. No components. No rehydration. Just one grammar, one file, and real-time performance.
+NitroPress is not a framework. It's a grammar.  
+A declarative, readable, and AI-native way to build full web applications — UI, API, and data — in a single `.nitro` file.
 
----
-
-## 🚀 What is NitroPress?
-
-NitroPress is a UI language that:
-
-- Uses a **custom DSL** to define UI, state, and routes
-- Leverages **signals** for reactive state updates
-- Includes **NitroIslands** for scoped reactivity (no VDOM)
-- Supports **NitroStream** for 1-line real-time data binding
-- Requires **no bundler, no hydration, no JSX**
-
-### 🔥 NAR = Nitro Architecture for Rendering
-
-|          | SPA       | MPA       | SSR       | **NAR**          |
-|----------|-----------|-----------|-----------|------------------|
-| Render   | JS-heavy  | Full reload | Server-side | **Structure-first** |
-| State    | useState  | Global     | Context    | **signal()**      |
-| Dynamic  | VDOM      | None       | Hydration  | **Island reactivity** |
-| Real-time| Complex   | Hard       | Middleware | **stream**        |
-| Format   | JSX       | HTML       | TSX        | **Nitro DSL**     |
+No JSX. No bundler. No hydration. No boilerplate. Just clean, expressive code.
 
 ---
 
-## ✨ Philosophy
+## 🔥 What is NitroPress?
 
-> UI is not a tree. UI is a sentence.
+NitroPress is a fullstack grammar-based UI language that:
 
-You don't write components — you declare structure.  
-You don’t write JavaScript — you describe behavior.  
-NitroPress is a **Grammar UI Language**, designed for both humans and AI.
-
-Every line has meaning. Every keyword has purpose.
-
----
-
-## ⚡ Performance Comparison
-
-| Feature                    | React (Next.js) | Astro       | **NitroPress**        |
-|----------------------------|------------------|-------------|------------------------|
-| Hydration Cost             | High             | Partial     | **None**               |
-| JS Bundle Size             | 100–300kb        | 20–80kb     | **0–5kb (per island)** |
-| Lighthouse Score (baseline)| 70–90            | 90–100      | **100**                |
-| SSR Complexity             | High             | Medium      | **Minimal**            |
-| Re-render Scope            | Global / Diffing | Static      | **Scoped Island**      |
-| Build System               | Webpack/Vite     | Vite        | **None (Bun CLI)**     |
-
-**NitroPress is not just fast. It is fundamentally minimal.**
+- Defines **UI with HTML-like syntax** (no JSX)
+- Declares **reactive state** via `signal()`
+- Creates **fine-grained interactivity** using `island:` blocks
+- Connects to **real-time data** with `stream:`
+- Handles **API logic** inside `server:` blocks
+- Describes **database schema and queries** in `db:`
+- Requires **no build system, no hydration, no virtual DOM**
 
 ---
 
-## 🔧 Core Syntax (Example)
+## 🧠 Why It Matters
 
+Most tools only give you UI.
+Some help with APIs. A few handle DBs.
+
+**NitroPress gives you everything — in one file.**
+
+| Feature        | React + Express + Prisma | Laravel | Astro + Xata | **NitroPress**        |
+|----------------|---------------------------|---------|---------------|------------------------|
+| UI             | ✅ JSX / Components        | ✅ Blade | ✅ HTML         | ✅ Nitro DSL            |
+| API            | ✅ Express (manual)        | ✅ Routes | ❌             | ✅ `server:` block      |
+| DB             | ✅ Prisma (external)       | ✅ Eloquent | ✅ (via SDK) | ✅ `db:` block          |
+| Build Tool     | ❌ Webpack / Vite          | ❌        | ✅ Vite        | ✅ **None (Bun)**       |
+| LLM Friendly   | ❌ Hard                    | ❌        | ✅ Partial     | ✅ **Perfect**          |
+| SSR / MPA      | ✅ Complex                 | ✅        | ✅             | ✅ **Simple + Native**  |
+
+---
+
+## ✨ Key Concepts
+
+### `state:` — Reactive values
 ```nitro
 state:
   count = signal(0)
+  doubled = computed("count * 2")
+```
 
+### `route:` — Pages
+```nitro
 route "/" do
   html:
     head:
-      title "NitroPress"
+      title "My App"
     body:
-      h1 "Count: #{count}"
+      h1 "#{count}"
       button @click="count++" "+"
 ```
 
----
-
-## 🧠 Designed for LLMs
-
-- Simple, indentation-based grammar
-- Explicit scope (state, route, island, stream)
-- No noisy symbols or unpredictable structures
-- AST-friendly for generation & validation
-
-LLMs can read, write, and refactor `.nitro` files easily.
-
----
-
-## ⚙️ CLI (Coming soon)
-
-- `nitro dev` — run a dev server (SSR, Bun-powered)
-- `nitro build` — output HTML + JS (MPA + Islands)
-- `nitro check` — validate DSL (syntax + logic violations)
-- `nitro init` — generate example apps
-
----
-
-## 🧪 Killer Features
-
-### ✅ `island`: fine-grained reactive scopes
+### `island:` — Scoped interactivity
 ```nitro
 island Counter:
   state:
-    count = signal(0)
+    n = signal(0)
   view:
-    p "Count: #{count}"
-    button @click="count++" "+"
+    p "Count: #{n}"
+    button @click="n++" "+"
 ```
 
-### ✅ `stream`: real-time data as a language construct
+### `stream:` — Real-time data
 ```nitro
-stream metrics from "/api/stream/metrics"
+stream metrics from "/api/metrics"
 
-for metric in metrics:
-  p "CPU: #{metric.cpu}%, RAM: #{metric.memory}MB"
+for m in metrics:
+  p "CPU: #{m.cpu}%, RAM: #{m.ram}%"
 ```
 
-### ✅ `prompt`: LLM function definitions (MVP+)
+### `server:` — API handlers
 ```nitro
-prompt Assistant:
-  "You are a helpful assistant."
+server:
+  post "/api/hello" do
+    return json({ msg: "Hello #{body.name}" })
+```
+
+### `db:` — Schema & queries
+```nitro
+db:
+  table messages:
+    id int primary
+    text string
+    created_at timestamp
+
+  query recent = from messages order by created_at desc
 ```
 
 ---
 
-## 📚 File Structure Philosophy
+## ⚡ Performance
 
-- One app = One `.nitro` file
-- Everything declared, nothing imported
-- Meaningful, readable, and AI-composable
+| Metric                    | React       | Astro      | **NitroPress**     |
+|---------------------------|-------------|------------|--------------------|
+| Hydration cost            | High        | Medium     | **None**           |
+| JS bundle size            | 100–300kb   | 20–80kb    | **0–5kb (per island)** |
+| Lighthouse score (baseline)| 70–90      | 90–100     | **100**            |
+| SSR complexity            | High        | Medium     | **Minimal**        |
+| Build system              | Webpack     | Vite       | **None (Bun)**     |
 
 ---
 
-## 💬 Get Involved
+## 🛠 CLI (Bun-based)
 
-> This is not the next React.  
-> This is the first **NAR language**.  
-> Build the grammar of the future.
+- `nitro dev` — run a dev server (SSR + API)
+- `nitro build` — output HTML + JS
+- `nitro check` — validate DSL + logic
+- `nitro init` — generate starter apps
 
-Follow the journey. Star the repo. Write your own `.nitro` app.
+---
 
-**The era of NAR is here.**
+## 💡 Why Developers Love It
+
+- Zero-config, zero-bundle
+- One grammar for all concerns: UI, logic, API, DB
+- Fullstack in one file — **perfect for MVPs and LLM apps**
+- Declarative, readable, composable
+- AI-readable + AI-writable + AI-checkable
+
+---
+
+## 🧠 Built for LLMs
+
+NitroPress is the first UI language **designed for AI generation**:
+
+- Clear scope (state, island, stream, server, db)
+- Predictable, indentation-based syntax
+- No noisy symbols, no JSX traps, no hidden logic
+- Easily parsed and generated via AST
+
+---
+
+## 🚀 A New Web Language
+
+> NitroPress is not the next React.  
+> It’s the next PHP.  
+> **Reimagined as clean, AI-native syntax.**
+
+---
+
+## ⭐ Try It
+
+```bash
+bunx nitro init chat.nitro
+bunx nitro dev
+```
+
+Then edit the `.nitro` file. No configs, no folders, no builds. Just code.
+
+**Write the full web in grammar. This is NitroPress.**
