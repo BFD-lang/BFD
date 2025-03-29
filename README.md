@@ -41,6 +41,21 @@ Every line has meaning. Every keyword has purpose.
 
 ---
 
+## ⚡ Performance Comparison
+
+| Feature                    | React (Next.js) | Astro       | **NitroPress**        |
+|----------------------------|------------------|-------------|------------------------|
+| Hydration Cost             | High             | Partial     | **None**               |
+| JS Bundle Size             | 100–300kb        | 20–80kb     | **0–5kb (per island)** |
+| Lighthouse Score (baseline)| 70–90            | 90–100      | **100**                |
+| SSR Complexity             | High             | Medium      | **Minimal**            |
+| Re-render Scope            | Global / Diffing | Static      | **Scoped Island**      |
+| Build System               | Webpack/Vite     | Vite        | **None (Bun CLI)**     |
+
+**NitroPress is not just fast. It is fundamentally minimal.**
+
+---
+
 ## 🔧 Core Syntax (Example)
 
 ```nitro
