@@ -3,7 +3,11 @@
 > **A fullstack web app in one file.**  
 > **UI, API, and DB — with no JS, no build, just grammar.**
 
-NitroPress is not a framework. It's a grammar.  
+NitroPress is not a framework. It’s a grammar.
+
+We made it because web development has become too fragmented,  
+too complex, and too far from what HTML used to be: readable, writable, and alive.
+
 A declarative, readable, and AI-native way to build full web applications — UI, API, and data — in a single `.nitro` file.
 
 No JSX. No bundler. No hydration. No boilerplate. Just clean, expressive code.
@@ -26,7 +30,7 @@ NitroPress is a fullstack grammar-based UI language that:
 
 ## 🧠 Why It Matters
 
-Most tools only give you UI.
+Most tools only give you UI.  
 Some help with APIs. A few handle DBs.
 
 **NitroPress gives you everything — in one file.**

@@ -8,4 +8,3 @@ route "/" do
     body:
       h1 "Count: #{count}"
       button @click="count++" "+"
-      button @click="count--" "-"
