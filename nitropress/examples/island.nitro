@@ -1,0 +1,6 @@
+island Counter:
+  state:
+    count = signal(0)
+  html:
+    button @click="count++" "+"
+    h1 "Count: #{count}"

@@ -7,6 +7,7 @@
 ## ❌ JavaScript Restrictions
 
 ### ❌ Disallowed
+
 - Arrow functions: `@click="() => foo()"`
 - Function declarations: `function greet() {}`
 - JS blocks or conditionals: `if (...) {}`, `for (...) {}`
@@ -15,6 +16,7 @@
 - Any kind of script tag (`<script>`, `eval()`, etc.)
 
 ### ✅ Allowed
+
 - Simple expressions in attributes: `@click="count++"`, `@input="name = 'Bob'"`
 - Signal access with interpolation: `p "Hello #{name}"`
 
@@ -48,14 +50,44 @@
 ## ✅ Enforcement
 
 Use `nitro check` to validate:
+
 - Syntax errors
 - Logic violations
 - Structural inconsistencies
 
 ---
 
+## 🧩 Island Constraints
+
+- Each `island` block **must include** both:
+
+  - a `state:` block
+  - an `html:` block
+
+- `state:` within an island is **fully isolated** from global `state:`
+
+  - Signals and computed values cannot cross island boundaries
+  - `computed("...")` can only reference signals defined **in the same island**
+
+- `html:` inside an island supports full DOM syntax:
+
+  - Tags, attributes (`props`), children, and interpolated `text` (`#{...}`)
+
+- Islands are **reactive**, but scoped:
+
+  - They re-render only when their own internal signals change
+  - They do **not** affect or depend on external reactivity
+
+- Island names must be:
+  - **PascalCase**
+  - **Unique** within a `.nitro` file
+  - Descriptive of their purpose (e.g., `LoginBox`, `Counter`)
+
+---
+
 These constraints are intentional.
 They make NitroPress:
+
 - Predictable
 - AI-compatible
 - Debuggable

@@ -13,17 +13,21 @@ NitroPress is not just about syntax. It's about **clarity, simplicity, and seman
 ## 📐 Formatting Rules
 
 ### Indentation
+
 - Use **2 spaces** per indent level (no tabs)
 - Indentation is meaningful and defines scope (YAML-style)
 
 ### Line Length
+
 - Keep lines under **80 characters** when possible
 
 ### Block Separation
+
 - Leave **1 empty line** between major blocks (e.g. `state:`, `route`)
 - Avoid multiple empty lines in a row
 
 ### Comments
+
 - Avoid unless strictly necessary
 - Prefer meaningful names and structure over comments
 - If needed, use `#` (single-line only)
@@ -33,14 +37,17 @@ NitroPress is not just about syntax. It's about **clarity, simplicity, and seman
 ## 🔠 Naming Conventions
 
 ### Variables (signals, computed)
+
 - Use `snake_case`: `user_name`, `cpu_usage`
 - Descriptive but concise
 
 ### Island and Stream names
+
 - Use `PascalCase`: `ChatIsland`, `CPUMonitor`
 - Match component-like naming style
 
 ### Route paths
+
 - Always use string literals: `route "/" do`
 
 ---
@@ -48,26 +55,65 @@ NitroPress is not just about syntax. It's about **clarity, simplicity, and seman
 ## 💡 Expression Style
 
 ### Interpolation
+
 ```nitro
 p "Welcome, #{user_name}"
 ```
+
 - Always use `#{}` for signal values
 
 ### Event handlers
+
 ```nitro
 button @click="count++" "+"
 ```
+
 - Keep expressions short and direct
 - No function definitions or JS chaining
 
 ### Computed
+
 ```nitro
 state:
   doubled = computed("count * 2")
 ```
+
 - Use double-quoted string for computed expressions
 
 ---
+
+## 🧩 Island Style Guide
+
+### Structure
+
+```nitro
+island Counter:
+  state:
+    count = signal(0)
+  html:
+    button @click="count++" "+"
+    h1 "Count: #{count}"
+```
+
+- Each island must contain a state: and an html: block
+
+- state: goes first, followed by html:
+
+- computed() can reference only signals within the same island
+
+### Placement
+
+- Place islands after global state: and before route: when possible
+
+- Group related islands together for clarity
+
+### Usage
+
+- Use islands for interactive widgets (e.g., counter, form, toggle)
+
+- Avoid putting global logic in islands — islands are isolated
+
+- Prefer small, focused islands over large, multi-purpose ones
 
 ## 📁 File Structure
 
