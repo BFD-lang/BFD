@@ -1,40 +1,36 @@
-> **Note:**  
-> Declare state in the `state:` block  
-> Define UI structure under `view:`  
-> Write logic in `script:` functions
+# 🚀 JetScript: Define UI, Don't Draw It
+
+> **Note:**
+>
+> - Declare state in the `state:` block
+> - Define UI structure under `view:`
+> - Write logic in `script:` functions
 
 ---
 
-## ✨ JetScript Features
+## ✨ Features at a Glance
 
-## ✅ Minimal Syntax for Defining UI
+### ✅ Minimal Syntax for Defining UI
 
-Say goodbye to bracket hell like `<>{}` in JSX.
-Instead, use a semantic and readable structure like:
+Say goodbye to bracket hell like `<>{}` in JSX. Use a semantic and readable structure:
 
 ```jetscript
 p: "Hello, {name}"
 ```
 
----
+### ✅ Real-time Reactive State
 
-## ✅ Real-time Reactive State
-
-A signal-based rendering model makes updates intuitive.
-Just write:
+Signal-based rendering makes state updates seamless:
 
 ```jetscript
 count += 1
 ```
 
-This updates the UI automatically.
-No need for `useState` or `setState`.
+No `useState`, no `setState`. Just direct updates.
 
----
+### ✅ Intuitive Components and Slots
 
-## ✅ Intuitive Components and Slots
-
-Define components with clear slot semantics:
+Define components and use named slots naturally:
 
 ```jetscript
 component Card(title, content):
@@ -43,11 +39,9 @@ component Card(title, content):
     div.content: slot content
 ```
 
----
+### ✅ Minimal Styling Syntax
 
-## ✅ Minimal Styling Syntax
-
-Clean and minimal syntax for styling:
+Simple, readable styling with future-proof extensibility:
 
 ```jetscript
 button:
@@ -55,21 +49,21 @@ button:
   text: "Click"
 ```
 
-Supports Tailwind and planned class abstractions.
+Tailwind supported. Class abstractions coming soon.
 
 ---
 
 ## 👤 Who Is JetScript For?
 
-- Startup developers who need fast UI prototyping
-- Syntax lovers / DSL geeks tired of React and Vue
-- AI × UI generation developers who want LLM-friendly syntax
+- Startup devs who need fast UI prototyping
+- Syntax lovers / DSL geeks tired of React/Vue
+- AI × UI generation devs who want LLM-friendly syntax
 
 ---
 
 ## ❓ Why JetScript?
 
-JetScript shifts from **"drawing UI" to "defining UI."**
+JetScript shifts from **"drawing UI" to "defining UI"**:
 
 - Shorter than JSX
 - Lighter than TypeScript
@@ -85,18 +79,17 @@ It removes the fatigue of:
 
 ---
 
-## 🛣️ Next Step (Development Roadmap)
+## 🛣️ Development Roadmap
 
-- MVP syntax: `state / view / script`, `bind`, `slot`, `for / if`
-- Signal-based runtime implementation
-- REPL / Playground
-- Component import / module syntax
-- JetScript → HTML/JS transpiler (minimal)
+- [x] MVP syntax: `state`, `view`, `script`, `bind`, `slot`, `for / if`
+- [ ] Signal-based runtime implementation
+- [ ] REPL / Playground
+- [ ] Component import & module syntax
+- [ ] JetScript → HTML/JS transpiler (minimal)
 
 ---
 
-## ✍️ Let JetScript Redefine UI
+## ✍️ Redefine UI with JetScript
 
 **JetScript – the optimized JavaScript for building UI.**  
-From the syntax up.
-
+From the syntax up. Write less. Build more.
