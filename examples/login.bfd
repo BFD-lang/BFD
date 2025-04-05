@@ -1,0 +1,15 @@
+route "/" do
+  html:
+    h1 "Hello :name"
+    form @submit="/api/login":
+      input name="email"
+      button "Login"
+
+server:
+  post "/api/login" do
+    return json({ ok: true, name: body.email })
+
+db:
+  table users:
+    id int primary
+    email string

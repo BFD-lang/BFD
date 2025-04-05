@@ -1,0 +1,35 @@
+route "/" do
+  data:
+    greeting: "Hello :name"
+
+  html:
+    h1 greeting
+    form @submit="/api/login":
+      input name="email"
+      button "Login"
+
+server:
+  post "/api/login" do
+    user = db.users.insert({ email: body.email })
+    return json({ ok: true, name: body.email })
+
+db:
+  table users:
+    id int primary
+    email string
+route "/chat" do
+  html:
+    h1 "Chat Room"
+    form @submit="/api/send":
+      input name="message"
+      button "Send"
+
+server:
+  post "/api/send" do
+    db.messages.insert({ text: body.message })
+    redirect "/chat"
+
+db:
+  table messages:
+    id int primary
+    text string
