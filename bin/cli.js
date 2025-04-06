@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { renderAstro } from "../runtime/rendererAstro.js";
 import { renderHTML } from "../runtime/renderer.js";
 import { parseBFD } from "../parser/bfdParser.js";
 import { readFileSync } from "fs";
@@ -14,5 +16,11 @@ const source = readFileSync(file, "utf-8");
 const ast = parseBFD(source);
 
 console.log("✨ AST generated:\n", JSON.stringify(ast, null, 2));
+
+if (Bun.argv.includes("--target=astro")) {
+  renderAstro(ast.route["/"]);
+  process.exit(0);
+}
+
 renderHTML(ast);
 startServer(ast.server);

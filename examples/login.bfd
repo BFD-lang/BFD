@@ -1,9 +1,21 @@
 route "/" do
-  html:
-    h1 "Hello :name"
-    form @submit="/api/login":
-      input name="email"
-      button "Login"
+  data:
+    title: "Welcome"
+
+  astro:
+    tag: Layout
+    children:
+      - tag: h1
+        content: title
+      - tag: form
+        props:
+          @submit: "/api/login"
+        children:
+          - tag: input
+            props:
+              name: "email"
+          - tag: button
+            content: "Login"
 
 server:
   post "/api/login" do
