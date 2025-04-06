@@ -18,6 +18,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "commander": "^13.1.0"
+    "commander": "^13.1.0",
+    "yaml": "^2.7.1"
   }
 }

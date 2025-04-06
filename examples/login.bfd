@@ -1,27 +1,25 @@
 route "/" do
   data:
-    title: "Welcome"
-
+    title: "Login Page"
   astro:
     tag: Layout
     children:
       - tag: h1
-        content: title
+        content: "title"
       - tag: form
         props:
-          @submit: "/api/login"
+          "@submit": "/api/login"
         children:
           - tag: input
             props:
               name: "email"
           - tag: button
             content: "Login"
-
 server:
-  post "/api/login" do
-    return json({ ok: true, name: body.email })
-
+  post:
+    "/api/login": |
+      return json({ ok: true, name: body.email })
 db:
-  table users:
-    id int primary
-    email string
+  users:
+    id: int primary
+    email: string

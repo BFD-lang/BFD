@@ -15,7 +15,7 @@ export function renderAstro(routeAST, outputPath = "./dist/index.astro") {
       ? `const { ${Object.keys(dataVars).join(", ")} } = Astro.props;`
       : "";
 
-  const body = renderNode(astroNode);
+  const body = renderNode(astroNode, 0);
 
   const template = `
 ---
@@ -31,7 +31,8 @@ ${body}
   console.log(`✨ .astro file written to ${outputPath}`);
 }
 
-function renderNode(node) {
+function renderNode(node, depth = 0) {
+  const indent = "  ".repeat(depth);
   const { tag, props = {}, children = [], content } = node;
 
   const attrs = Object.entries(props)
@@ -41,16 +42,19 @@ function renderNode(node) {
   const open = `<${tag}${attrs ? " " + attrs : ""}>`;
 
   if (content) {
-    return `${open}${wrapContent(content)}</${tag}>`;
+    return `${indent}${open}${wrapContent(content)}</${tag}>`;
   }
 
   if (!children.length) {
-    return `${open}</${tag}>`;
+    return `${indent}${open}</${tag}>`;
   }
 
-  return `${open}
-${children.map(renderNode).join("\n")}
-</${tag}>`;
+  const inner = children
+    .map((child) => renderNode(child, depth + 1))
+    .join("\n");
+  return `${indent}${open}
+${inner}
+${indent}</${tag}>`;
 }
 
 function convertProp(key, val) {
@@ -60,6 +64,5 @@ function convertProp(key, val) {
 }
 
 function wrapContent(text) {
-  // content: "title" → {title}
   return `{${text}}`;
 }
