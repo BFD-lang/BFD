@@ -1,0 +1,27 @@
+{
+  "name": "mizulang",
+  "version": "1.0.0",
+  "description": "**ZapLang** is a backend-first, full-stack TypeScript DSL framework where everything except the view layer is defined in a single file: `zap.config.ts`.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "zap": "ts-node cli/index.ts",
+    "dev": "vercel dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^13.1.0",
+    "drizzle-kit": "^0.30.6",
+    "drizzle-orm": "^0.41.0",
+    "fs-extra": "^11.3.0",
+    "preact": "^10.26.5",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

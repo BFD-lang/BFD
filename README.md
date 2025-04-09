@@ -1,117 +1,136 @@
-# ⚡️ Zap.ts
+# ZapLang
 
-**Zap.ts** is a next-generation framework-BaaS hybrid that lets you define your entire app using just one file: a declarative TypeScript DSL.
+**ZapLang** is a backend-first, full-stack TypeScript DSL framework where everything except the view layer is defined in a single file: `zap.config.ts`.
 
-- Instant API & DB with `defineApp()`
-- Fully typed SDK generation
-- Local-first with Bun + Turso
-- CLI-first DX
-- GPT-friendly design for the AI-native era
+It introduces the concept of **Zero Responsibility UI** — the frontend has no business logic, no state, no validation, no API knowledge. It simply reflects what the backend defines.
 
 ---
 
-## 🚀 Quick Start
+## 🚀 What is ZapLang?
+
+ZapLang is a **declarative, type-safe application framework** where the backend defines:
+
+- Database schema
+- API routes
+- Event handlers
+- Auth & policies
+- State transitions
+
+...and the frontend becomes just a **projection layer**.
+
+---
+
+## 🧠 Core Philosophy
+
+- **Backend owns logic, state, and flow**
+- **Frontend does nothing but reflect** backend-defined state
+- **State is stored in the database or declared in logic DSL**
+- **Policies and permissions are enforced server-side only**
+- **UI is stateless and functional**
+
+---
+
+## 💡 The "Zero Responsibility UI" Model
+
+| Concern            | Where It Lives       | Notes                          |
+|--------------------|----------------------|---------------------------------|
+| App State          | ZapLang DSL & DB     | useState? Never heard of it.   |
+| Business Logic     | Handlers             | Pure backend TS functions      |
+| Permissions        | `policies` in DSL    | Fully enforced server-side     |
+| State Transitions  | `transitions` in DSL | UI just calls `useTransition()`|
+| Forms & Validation | Handlers             | No need for frontend schemas   |
+| Routing Logic      | State-driven in DSL  | UI shows current state only    |
+
+---
+
+## 📦 Folder Structure
 
 ```bash
-npx create-zap-app my-app
-cd my-app
-zap dev
+my-zap-app/
+├ zap.config.ts       # The heart of the app (DSL config)
+├ handlers/           # Backend logic functions
+├ pages/              # UI templates (thin components)
+├ sdk/                # Auto-generated useAPI, useDB, etc.
+├ zap.dev.ts          # Local server using Deno.serve()
 ```
-
-Then visit [http://localhost:8787](http://localhost:8787) — you're live ⚡️
 
 ---
 
-## 💡 Example: `zap.ts`
+## ✨ Example
 
 ```ts
-export default defineApp({
+// zap.config.ts
+export default defineZap({
   db: {
-    posts: {
-      id: "string",
-      title: "string",
-      created_at: "datetime",
-    },
+    tasks: {
+      id: 'string',
+      title: 'string',
+      status: 'enum(draft, submitted, approved)',
+      assignedTo: 'string'
+    }
   },
   api: {
-    getPosts: {
-      method: "GET",
-      path: "/posts",
-      public: true,
-      handler: ({ db }) => db.posts.all(),
-    },
+    submitTask: {
+      method: 'POST',
+      path: '/tasks/:id/submit',
+      handler: 'handlers/submitTask.ts'
+    }
   },
-  events: {
-    daily: {
-      trigger: "cron.daily",
-      handler: ({ db }) => {
-        const count = db.posts.find({ created_at: within(24, "hours") }).length;
-        return webhook("https://slack.com/...", {
-          text: `New posts: ${count}`,
-        });
-      },
-    },
-  },
-});
+  logic: {
+    transitions: {
+      submitTask: {
+        from: 'draft',
+        to: 'submitted',
+        guard: "user == record.assignedTo"
+      }
+    }
+  }
+})
+```
+
+```tsx
+// pages/TaskList.tsx
+import { useDB, useAPI } from '@/sdk'
+
+export default function TaskList() {
+  const { data } = useDB('tasks')
+  const { mutate } = useAPI('submitTask')
+
+  return (
+    <ul>
+      {data.map(task => (
+        <li key={task.id}>
+          {task.title}
+          <button onClick={() => mutate({ id: task.id })}>Submit</button>
+        </li>
+      ))}
+    </ul>
+  )
+}
 ```
 
 ---
 
-## ✨ Features
-
-- 🔧 **CLI-driven**: `zap dev`, `zap generate`, `zap preview`
-- ⚡️ **Instant backend**: DB + API from one file
-- 🧠 **AI-native**: designed for GPT-based generation & extension
-- 🧰 **Templates**: `zap init --template chat`
-- 🧪 **Fully local**: no cloud required to start
-
----
-
-## 📁 Project Structure
-
-```
-my-app/
-├── zap.ts            # App definition
-├── pages/            # UI (Next.js-style)
-├── sdk/              # Auto-generated SDK
-├── public/           # Static assets
-└── README.md
-```
-
----
-
-## 📦 Templates
-
-Use prebuilt templates:
+## 🔧 CLI
 
 ```bash
-zap init --template chat
-zap init --template cms
-zap init --template ai-log
+zap init --template dashboard
+zap dev
+zap generate ui task
+zap deploy
 ```
 
 ---
 
-## 🛠 Roadmap Highlights
+## 🔮 Summary
 
-- v0.2: Auth with Lucia, HMAC Webhooks, DB Engine switching
-- v0.3: GUI Editor (Zap Studio), plugin system, `defineApp()` extensions
-- v1.0: ZapLang, GPT plugin mode, Cloudless backend deployments
+ZapLang is a **backend-declared application framework** where structure, logic, state, and flow are all centralized.
 
----
+- Define once in `zap.config.ts`
+- Generate everything: SDKs, pages, routes
+- Eliminate frontend state bugs
+- Deploy instantly via Deno
 
-## 🧠 Philosophy
+> Define it. Run it. Trust it.
 
-Zap isn’t just another BaaS. It’s:
-
-- a **syntax-driven framework**
-- a new way to build MVPs fast
-- fully local, fully typed, fully GPT-compatible
-
-> **“If you can describe your app, Zap can build it.”**
-
----
-
-Made with ⚡️ by future-thinkers.
-
----
+Welcome to the era of **Zero Responsibility UI** ✨
