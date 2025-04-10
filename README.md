@@ -1,12 +1,12 @@
-# ZapLang
+# Zap.ts
 
-**ZapLang** is a backend-first, full-stack TypeScript DSL framework where everything except the view layer is defined in a single file: `zap.config.ts`.
+**Zap.ts** is a backend-first, full-stack TypeScript DSL framework where everything except the view layer is defined in a single file: `zap.config.ts`.
 
 It introduces the concept of **Zero Responsibility UI** — the frontend has no business logic, no state, no validation, no API knowledge. It simply reflects what the backend defines.
 
 ---
 
-## 🚀 What is ZapLang?
+## 🚀 What is Zap.ts?
 
 ZapLang is a **declarative, type-safe application framework** where the backend defines:
 
@@ -127,7 +127,7 @@ npm run dev
 
 We are currently in the process of reorganizing the Git history to remove some mistakenly committed large files.
 
-ZapLang is **actively maintained**, and the source code will be re-pushed shortly in a cleaner, lighter format.
+Zap.ts is **actively maintained**, and the source code will be re-pushed shortly in a cleaner, lighter format.
 
 Thank you for your continued interest and support — and if you’ve already starred this project, you’re amazing ❤️
 
@@ -135,7 +135,7 @@ Thank you for your continued interest and support — and if you’ve already st
 
 ## 🔮 Summary
 
-ZapLang is a **backend-declared application framework** where structure, logic, state, and flow are all centralized.
+Zap.ts is a **backend-declared application framework** where structure, logic, state, and flow are all centralized.
 
 - Define once in `zap.config.ts`
 - Generate everything: SDKs, pages, routes
