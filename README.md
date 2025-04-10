@@ -32,14 +32,14 @@ ZapLang is a **declarative, type-safe application framework** where the backend 
 
 ## 💡 The "Zero Responsibility UI" Model
 
-| Concern            | Where It Lives       | Notes                          |
-|--------------------|----------------------|---------------------------------|
-| App State          | ZapLang DSL & DB     | useState? Never heard of it.   |
-| Business Logic     | Handlers             | Pure backend TS functions      |
-| Permissions        | `policies` in DSL    | Fully enforced server-side     |
-| State Transitions  | `transitions` in DSL | UI just calls `useTransition()`|
-| Forms & Validation | Handlers             | No need for frontend schemas   |
-| Routing Logic      | State-driven in DSL  | UI shows current state only    |
+| Concern            | Where It Lives       | Notes                           |
+| ------------------ | -------------------- | ------------------------------- |
+| App State          | ZapLang DSL & DB     | useState? Never heard of it.    |
+| Business Logic     | Handlers             | Pure backend TS functions       |
+| Permissions        | `policies` in DSL    | Fully enforced server-side      |
+| State Transitions  | `transitions` in DSL | UI just calls `useTransition()` |
+| Forms & Validation | Handlers             | No need for frontend schemas    |
+| Routing Logic      | State-driven in DSL  | UI shows current state only     |
 
 ---
 
@@ -47,7 +47,7 @@ ZapLang is a **declarative, type-safe application framework** where the backend 
 
 ```bash
 my-zap-app/
-├ zap.config.ts       # The heart of the app (DSL config)
+├ zap.ts       # The heart of the app (DSL config)
 ├ handlers/           # Backend logic functions
 ├ pages/              # UI templates (thin components)
 ├ sdk/                # Auto-generated useAPI, useDB, etc.
@@ -63,49 +63,49 @@ my-zap-app/
 export default defineZap({
   db: {
     tasks: {
-      id: 'string',
-      title: 'string',
-      status: 'enum(draft, submitted, approved)',
-      assignedTo: 'string'
-    }
+      id: "string",
+      title: "string",
+      status: "enum(draft, submitted, approved)",
+      assignedTo: "string",
+    },
   },
   api: {
     submitTask: {
-      method: 'POST',
-      path: '/tasks/:id/submit',
-      handler: 'handlers/submitTask.ts'
-    }
+      method: "POST",
+      path: "/tasks/:id/submit",
+      handler: "handlers/submitTask.ts",
+    },
   },
   logic: {
     transitions: {
       submitTask: {
-        from: 'draft',
-        to: 'submitted',
-        guard: "user == record.assignedTo"
-      }
-    }
-  }
-})
+        from: "draft",
+        to: "submitted",
+        guard: "user == record.assignedTo",
+      },
+    },
+  },
+});
 ```
 
 ```tsx
 // pages/TaskList.tsx
-import { useDB, useAPI } from '@/sdk'
+import { useDB, useAPI } from "@/sdk";
 
 export default function TaskList() {
-  const { data } = useDB('tasks')
-  const { mutate } = useAPI('submitTask')
+  const { data } = useDB("tasks");
+  const { mutate } = useAPI("submitTask");
 
   return (
     <ul>
-      {data.map(task => (
+      {data.map((task) => (
         <li key={task.id}>
           {task.title}
           <button onClick={() => mutate({ id: task.id })}>Submit</button>
         </li>
       ))}
     </ul>
-  )
+  );
 }
 ```
 
@@ -114,11 +114,22 @@ export default function TaskList() {
 ## 🔧 CLI
 
 ```bash
-zap init --template dashboard
-zap dev
-zap generate ui task
-zap deploy
+npx create-zapts-app my-zap-app
+cd my-zap-app
+npm install
+npm run zap generate all
+npm run dev
+
 ```
+---
+
+## 🛠 Maintenance Notice
+
+We are currently in the process of reorganizing the Git history to remove some mistakenly committed large files.
+
+ZapLang is **actively maintained**, and the source code will be re-pushed shortly in a cleaner, lighter format.
+
+Thank you for your continued interest and support — and if you’ve already starred this project, you’re amazing ❤️
 
 ---
 
